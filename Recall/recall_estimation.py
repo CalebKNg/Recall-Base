@@ -13,7 +13,7 @@ from hailo_apps_infra.hailo_rpi_common import (
     get_numpy_from_buffer,
 )
 
-from hailo_apps_infra.detection_pipeline import GStreamerDetectionApp
+from hailo_apps_infra.detection_pipeline import GStreamerDetectionApp, GStreamerApp
 
 # Import recall app
 from communication import RecallApp
@@ -68,5 +68,5 @@ def app_callback(pad, info, user_data):
 if __name__ == "__main__":
     # Create an instance of the user app callback class
     user_data = user_app_callback_class()
-    app = GStreamerDetectionApp(app_callback, user_data)
+    app = GStreamerApp(app_callback, user_data)
     app.run()
