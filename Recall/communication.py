@@ -32,8 +32,9 @@ class RecallApp:
         headers = {"Content-Type": "application/json"}
         data = config.data
         response = requests.post(url, json=data, headers=headers)
-
+        print(response.status_code)
         if (response.status_code == 200):
+            print(response.json()["access"])
             return response.json()["access"]
 
     def obtainObjects(self):
