@@ -34,14 +34,15 @@ class RecallApp:
         response = requests.post(url, json=data, headers=headers)
         print(response.status_code)
         if (response.status_code == 200):
-            print(response.json()["access"])
+            # print(response.json()["access"])
             return response.json()["access"]
 
     def obtainObjects(self):
         # Ask for a list of objects
         url = "https://fydp-backend-production.up.railway.app/ObjectTracking/" 
         headers = {"Content-Type": "application/json", "Authorization":self.bearerToken}
-
+        print("obtain")
+        print(headers)
         response = requests.get(url, headers=headers)
         print(response.status_code)
         if(response.status_code == 200):
