@@ -21,8 +21,8 @@ class RecallApp:
 
         # Get Initial List
         self.obtainObjects()
-        print("Initial list")
-        print(self.trackedObjects)
+        # print("Initial list")
+        # print(self.trackedObjects)
         # Start process
         self.process = Process(target=self.run)
         self.process.start()
@@ -59,7 +59,7 @@ class RecallApp:
                 # calculate distance between last seen location
                 # euclidean distance
                 dist = np.sqrt((item.x - x)**2 + (item.y - y)**2)
-                if(dist > 10):
+                if(dist > 1):
 
                     print("Phone moved " + str(dist) + "pixels")
 
