@@ -21,7 +21,8 @@ class RecallApp:
 
         # Get Initial List
         self.obtainObjects()
-
+        print("Initial list")
+        print(self.trackedObjects)
         # Start process
         self.process = Process(target=self.run)
         self.process.start()
@@ -49,7 +50,7 @@ class RecallApp:
             # self.trackedObjects = response.json()
 
     def updateLocations(self, id, x, y):
-        print("updating "+ str(id))
+        # print("updating "+ str(id))
         for item in self.trackedObjects:
             if item.id == id:
                 # calculate distance between last seen location
