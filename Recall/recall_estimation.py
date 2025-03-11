@@ -13,7 +13,7 @@ from hailo_apps_infra.hailo_rpi_common import (
     get_numpy_from_buffer,
 )
 
-from hailo_apps_infra.detection_pipeline import GStreamerDetectionApp
+from hailo_apps_infra.detection_pipeline import GStreamerDetectionApp, GStreamerApp
 
 # Import recall app
 from communication import RecallApp
