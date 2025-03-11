@@ -1,8 +1,8 @@
 
 # Recall
-Recall is FYDP that aims to track the location of commonly lost objects
+Recall is Mechatronics FYDP that aims to track the location of commonly lost objects.
 
-This repo consists of the code run on the Raspberry pi
+This repo consists of the code running on the Raspberry pi.
 
 ## Installation
 
@@ -21,8 +21,6 @@ Run the following script to automate the installation process:
 ./install.sh
 ```
 
-### Documentation
-For additional information and documentation on how to use the pipelines to create your own custom pipelines, see the [Basic Pipelines Documentation](doc/basic-pipelines.md).
 
 ### Running The Examples
 When opening a new terminal session, ensure you have sourced the environment setup script:
