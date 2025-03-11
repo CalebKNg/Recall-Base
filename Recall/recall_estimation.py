@@ -26,7 +26,7 @@ class user_app_callback_class(app_callback_class):
         self.recallapp = RecallApp()
 
 def app_callback(pad, info, user_data):
-        # Get the GstBuffer from the probe info
+    # Get the GstBuffer from the probe info
     buffer = info.get_buffer()
     # Check if the buffer is valid
     if buffer is None:
@@ -41,21 +41,27 @@ def app_callback(pad, info, user_data):
 
     # If the user_data.use_frame is set to True, we can get the video frame from the buffer
     frame = None
-    if user_data.use_frame and format is not None and width is not None and height is not None:
+    if format is not None and width is not None and height is not None:
         # Get video frame
         frame = get_numpy_from_buffer(buffer, format, width, height)
 
     # Get the detections from the buffer
     roi = hailo.get_roi_from_buffer(buffer)
     detections = roi.get_objects_typed(hailo.HAILO_DETECTION)
+    
 
     # Parse the detections
     for detection in detections:
         label = detection.get_label()
         bbox = detection.get_bbox()
         confidence = detection.get_confidence()
-
+        if label == "cell phone" and confidence > 0.8:
+            ## assume only one cell phone
+            x = bbox.xmin()+bbox.width()/2
+            y = bbox.ymin()+bbox.height()/2
+            user_data.recallapp.updateLocations(14, x, y)
     # Do something with the detection that updates the recall app
+    #user_data.recallapp.
 
     return Gst.PadProbeReturn.OK
 
