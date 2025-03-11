@@ -58,7 +58,7 @@ class RecallApp:
             if item.id == id:
                 # calculate distance between last seen location
                 # euclidean distance
-                dist = np.sqrt((item.x - x)**2 + (item.y - y)^2)
+                dist = np.sqrt((item.x - x)**2 + (item.y - y)**2)
 
                 print("Phone moved " + dist + "pixels")
 
