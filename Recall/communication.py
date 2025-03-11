@@ -2,6 +2,7 @@ import cv2
 import numpy as np
 import requests
 from multiprocessing import Process, Queue
+import config
 
 class Object:
     def __init__(self, id):
@@ -13,9 +14,12 @@ class RecallApp:
     def __init__(self):
         # prob need an auth token as well as a dictionary of the objects that are currently being tracked
         self.trackedObjects = []
-        
+
         # Get Token
         self.bearerToken = self.obtainBearer()
+
+        # Get Initial List
+        self.obtainObjects()
 
         # Start process
         self.process = Process(target=self.run)
@@ -24,10 +28,7 @@ class RecallApp:
     def obtainBearer(self):
         url = "https://fydp-backend-production.up.railway.app/api/auth/login/" 
         headers = {"Content-Type": "application/json"}
-        data = {
-            "email": "wesleykim2002@gmail.com",
-            "password": "Password123"
-        }
+        data = config.data
         response = requests.post(url, json=data, headers=headers)
 
         if (response.status_code == 200):
@@ -35,7 +36,12 @@ class RecallApp:
 
     def obtainObjects(self):
         # Ask for a list of objects
-        pass
+        url = "https://fydp-backend-production.up.railway.app/ObjectTracking/" 
+        headers = {"Content-Type": "application/json", "Authorization":self.bearerToken}
+
+        response = requests.get(url, headers=headers)
+        if(response.status_code == 200):
+            self.trackedObjects = response.json()
 
     def updateLocations(self, ID):
         pass
