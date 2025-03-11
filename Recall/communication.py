@@ -42,6 +42,7 @@ class RecallApp:
         headers = {"Content-Type": "application/json", "Authorization":self.bearerToken}
 
         response = requests.get(url, headers=headers)
+        print(response.status_code)
         if(response.status_code == 200):
             for item in response.json():
                 id = item["id"]
