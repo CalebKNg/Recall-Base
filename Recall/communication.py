@@ -61,7 +61,7 @@ class RecallApp:
                 dist = np.sqrt((item.x - x)**2 + (item.y - y)**2)
                 # manhattan 
                 dist = np.abs(item.x-x) + np.abs(item.y-y)
-                print(dist)
+                # print(dist)
                 if(dist > 2):
                     print("Phone moved " + str(dist) + "pixels")
 
