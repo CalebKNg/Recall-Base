@@ -44,7 +44,7 @@ def app_callback(pad, info, user_data):
     if format is not None and width is not None and height is not None:
         # Get video frame
         frame = get_numpy_from_buffer(buffer, format, width, height)
-
+    user_data.set_frame(frame)
     # Get the detections from the buffer
     roi = hailo.get_roi_from_buffer(buffer)
     detections = roi.get_objects_typed(hailo.HAILO_DETECTION)
