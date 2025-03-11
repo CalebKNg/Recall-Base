@@ -60,7 +60,7 @@ def app_callback(pad, info, user_data):
             x = bbox.xmin()+bbox.width()/2
             y = bbox.ymin()+bbox.height()/2
             user_data.recallapp.updateLocations(14, x, y)
-            print("cell phone")
+            # print("cell phone")
     # Do something with the detection that updates the recall app
     #user_data.recallapp.
 

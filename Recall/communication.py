@@ -49,6 +49,7 @@ class RecallApp:
             # self.trackedObjects = response.json()
 
     def updateLocations(self, id, x, y):
+        print("updating "+ str(id))
         for item in self.trackedObjects:
             if item.id == id:
                 # calculate distance between last seen location
