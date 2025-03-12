@@ -2,9 +2,22 @@ import cv2
 import numpy as np
 import requests
 from multiprocessing import Process, Queue
+import torch
 import base64
 import config
 from collections import deque
+
+classNames = ["person", "bicycle", "car", "motorbike", "aeroplane", "bus", "train", "truck", "boat",
+              "traffic light", "fire hydrant", "stop sign", "parking meter", "bench", "bird", "cat",
+              "dog", "horse", "sheep", "cow", "elephant", "bear", "zebra", "giraffe", "backpack", "umbrella",
+              "handbag", "tie", "suitcase", "frisbee", "skis", "snowboard", "sports ball", "kite", "baseball bat",
+              "baseball glove", "skateboard", "surfboard", "tennis racket", "bottle", "wine glass", "cup",
+              "fork", "knife", "spoon", "bowl", "banana", "apple", "sandwich", "orange", "broccoli",
+              "carrot", "hot dog", "pizza", "donut", "cake", "chair", "sofa", "pottedplant", "bed",
+              "diningtable", "toilet", "tvmonitor", "laptop", "mouse", "remote", "keyboard", "cell phone",
+              "microwave", "oven", "toaster", "sink", "refrigerator", "book", "clock", "vase", "scissors",
+              "teddy bear", "hair drier", "toothbrush"
+              ]
 
 class Object:
     def __init__(self, id, name):
@@ -20,19 +33,39 @@ class Object:
 class RecallApp:
     def __init__(self):
         # prob need an auth token as well as a dictionary of the objects that are currently being tracked
-        self.trackedObjects = []
+        
         self.historyLength = 60
         self.avgLength = 10
+        self.updateSurroundingsEvery = 900
+        self.count = self.updateSurroundingsEvery
+
+        # Tracked objects list
+        self.trackedObjects = []
+        
+        # Queue
+        self.MLFrameQueue = Queue()
+
+        # Surroundings list
+        self.surroundings = []
+        
         # Get Token
         self.bearerToken = self.obtainBearer()
 
         # Get Initial List
         self.obtainObjects()
-        # print("Initial list")
-        # print(self.trackedObjects)
+
+        # Initiate Relational Model
+        self.model = torch.hub.load("ultralytics/yolov5", "yolov5s")
+
         # Start process
         self.process = Process(target=self.run)
         self.process.start()
+
+    def increment(self):
+        self.count += 1
+
+    def getCount(self):
+        return self.count
 
     def obtainBearer(self):
         url = "https://fydp-backend-production.up.railway.app/api/auth/login/" 
@@ -58,7 +91,7 @@ class RecallApp:
                 id = item["id"]
                 name = item["name"]
                 ob = Object(id, name)
-                for i in range(self.avgLength):
+                for i in range(self.avgLength): 
                     ob.locHistory.append((0,0))
                 self.trackedObjects.append(ob)
             # self.trackedObjects = response.json()
@@ -97,20 +130,23 @@ class RecallApp:
                     if dist < threshold:
                         # stopped moving
                         
-                        print("Phone moved " + str(dist) + "pixels")
+                        # print("Phone moved " + str(dist) + "pixels")
                         item.isMoving = False
                         output = self.toB64(frame)
+                    
                         # make request
+                        # self.sendUpdate(item.id, output, "")
 
                 else:   # If not moving
                     if dist >= threshold:
                         item.isMoving = True
-                        print("Phone is moving")
+                        # print("Phone is moving")
 
                 # print(item.isMoving)
                 # Update distance
                 item.x = x
                 item.y = y
+                item.lastLocationImage = self.toB64(frame)
 
                 # Update queue
                 if(len(item.locHistory) > self.historyLength):
@@ -120,17 +156,9 @@ class RecallApp:
                     item.locHistory.appendleft((x, y))
 
 
-    def toB64(self, img):
-        _, buffer = cv2.imencode('.jpg', img)
-        im_bytes = buffer.tobytes()
-        b64 = base64.b64encode(im_bytes)
-        return b64.decode("utf-8")
-
     def sendUpdate(self, id, name, image, description):
-        url = "fydp-backend-production.up.railway.app/ObjectTracking/" + id
-        headers = {"Content-Type": "application/json", "Authorization":"Bearer " +self.bearerToken}
-
-        imageBase64 =base64.b64encode()
+        url = "fydp-backend-production.up.railway.app/ObjectTracking/" + str(id)
+        headers = {"Content-Type": "application/json", "Authorization":"Bearer " + self.bearerToken}
 
         data = {
             "name": name,
@@ -141,11 +169,42 @@ class RecallApp:
         response = requests.post(url, json=data, headers=headers)
         print(response.status_code)
 
+    def obtainSurroundings(self, frame):
+        print("obtained")
+        self.count == 0
+        # results = self.model(frame)
+        # r = results.xyxy[0].numpy()
+
+        # for row in r:
+        #     xmin, ymin, xmax, ymax, confidence, cls = row
+            
+        #     xmin, ymin, xmax, ymax, cls = int(xmin), int(ymin), int(xmax), int(ymax), int(cls)
+        #     x = xmin+(xmax-xmin)/2
+        #     y = ymin+(ymax-ymin)/2
+        #     self.surroundings.append((x, y, classNames[cls]))
+
+
+    def toB64(self, img):
+        _, buffer = cv2.imencode('.jpg', img)
+        im_bytes = buffer.tobytes()
+        b64 = base64.b64encode(im_bytes)
+        return b64.decode("utf-8")
+
+
+
+    def grabNewPictures(self, id):
+        url= "fydp-backend-production.up.railway.app/ObjectImage/?tracking_object_id=" +str(id)
+        headers = {"Content-Type": "application/json", "Authorization":"Bearer " +self.bearerToken}
+
     def run(self):
         # Run this loop in another process
         while True:
             # Main Program Loop
-            pass
+
+            # Update Surroundings
+            if not self.MLFrameQueue():
+                frame = self.MLFrameQueue.get()
+                self.obtainSurroundings(frame)
     
     def terminate(self):
         self.process.terminate()

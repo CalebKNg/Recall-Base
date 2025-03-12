@@ -34,6 +34,9 @@ def app_callback(pad, info, user_data):
 
     # Using the user_data to count the number of frames
     user_data.increment()
+
+
+
     string_to_print = f"Frame count: {user_data.get_count()}\n"
 
     # Get the caps from the pad
@@ -46,6 +49,12 @@ def app_callback(pad, info, user_data):
         frame = get_numpy_from_buffer(buffer, format, width, height)
     user_data.set_frame(frame)
 
+    # Also count frames through the app
+    count = user_data.recallapp.getCount()
+    if count == user_data.recallapp.updateSurroundingsEvery:
+        user_data.recallapp.MLFrameQueue.put(frame)
+    user_data.recallapp.increment()
+    
     # Get the detections from the buffer
     roi = hailo.get_roi_from_buffer(buffer)
     detections = roi.get_objects_typed(hailo.HAILO_DETECTION)
@@ -67,7 +76,7 @@ def app_callback(pad, info, user_data):
             
     # Do something with the detection that updates the recall app
     #user_data.recallapp.
-
+    user_data.recallapp.increment()
     return Gst.PadProbeReturn.OK
 
 if __name__ == "__main__":
