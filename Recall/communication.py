@@ -21,7 +21,8 @@ class RecallApp:
     def __init__(self):
         # prob need an auth token as well as a dictionary of the objects that are currently being tracked
         self.trackedObjects = []
-        self.historyLength = 30
+        self.historyLength = 60
+        self.avgLength = 10
         # Get Token
         self.bearerToken = self.obtainBearer()
 
@@ -57,7 +58,7 @@ class RecallApp:
                 id = item["id"]
                 name = item["name"]
                 ob = Object(id, name)
-                for i in range(5):
+                for i in range(self.avgLength):
                     ob.locHistory.append((0,0))
                 self.trackedObjects.append(ob)
             # self.trackedObjects = response.json()
@@ -78,11 +79,11 @@ class RecallApp:
                 # Grab average of the last 5 
                 xrec = 0
                 yrec = 0
-                for i in range(5):
+                for i in range(self.avgLength):
                     xrec += item.locHistory[i][0]
                     yrec += item.locHistory[i][1]
-                xrec = xrec/5
-                yrec = yrec/5
+                xrec = xrec/self.avgLength
+                yrec = yrec/self.avgLength
                 # euclidean distance
                 # dist = np.sqrt((x - xavg)**2 + (y - yavg)**2)
                 dist = np.sqrt((xrec - xavg)**2 + (yrec - yavg)**2)
