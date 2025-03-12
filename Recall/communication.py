@@ -94,7 +94,7 @@ class RecallApp:
                 if item.isMoving:
                     if dist < threshold:
                         # stopped moving
-                        print("Phone moved " + str(dist) + "pixels")
+                        # print("Phone moved " + str(dist) + "pixels")
                         item.isMoving = False
                         output = self.toB64(frame)
                         # make request
@@ -104,6 +104,7 @@ class RecallApp:
                     if dist >= threshold:
                         item.isMoving = True
 
+                print(item.isMoving)
                 # Update distance
                 item.x = x
                 item.y = y
