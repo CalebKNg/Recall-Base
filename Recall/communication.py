@@ -74,7 +74,7 @@ class RecallApp:
                 yavg = ysum/len(item.locHistory)
 
                 # euclidean distance
-                dist = np.sqrt((x - xsum)**2 + (y - ysum)**2)
+                dist = np.sqrt((x - xavg)**2 + (y - yavg)**2)
                 
                 # # manhattan 
                 # dist = np.abs(item.x-x) + np.abs(item.y-y)
