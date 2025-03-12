@@ -57,7 +57,8 @@ class RecallApp:
                 id = item["id"]
                 name = item["name"]
                 ob = Object(id, name)
-                ob.locHistory.append((0,0))
+                for i in range(5):
+                    ob.locHistory.append((0,0))
                 self.trackedObjects.append(ob)
             # self.trackedObjects = response.json()
 
@@ -74,8 +75,17 @@ class RecallApp:
                 xavg = xsum/len(item.locHistory)
                 yavg = ysum/len(item.locHistory)
 
+                # Grab average of the last 5 
+                xrec = 0
+                yrec = 0
+                for i in range(5):
+                    xrec += item.locHistory[i][0]
+                    yrec += item.locHistory[i][1]
+
                 # euclidean distance
-                dist = np.sqrt((x - xavg)**2 + (y - yavg)**2)
+                # dist = np.sqrt((x - xavg)**2 + (y - yavg)**2)
+                dist = np.sqrt((xrec - xavg)**2 + (yrec - yavg)**2)
+
                 # print(dist)
                 
                 # # manhattan 
@@ -100,10 +110,10 @@ class RecallApp:
 
                 # Update queue
                 if(len(item.locHistory) > self.historyLength):
-                    item.locHistory.popleft()
-                    item.locHistory.append((x, y))
+                    item.locHistory.popright()
+                    item.locHistory.appendleft((x, y))
                 else:
-                    item.locHistory.append((x, y))
+                    item.locHistory.appendleft((x, y))
 
 
     def toB64(self, img):
