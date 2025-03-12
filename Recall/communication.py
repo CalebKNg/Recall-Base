@@ -2,7 +2,9 @@ import cv2
 import numpy as np
 import requests
 from multiprocessing import Process, Queue
+import base64
 import config
+from collections import deque
 
 class Object:
     def __init__(self, id, name):
@@ -10,12 +12,15 @@ class Object:
         self.name = name
         self.x = 0
         self.y = 0
+        self.locHistory = deque()
+        self.isMoving = True
+        
 
 class RecallApp:
     def __init__(self):
         # prob need an auth token as well as a dictionary of the objects that are currently being tracked
         self.trackedObjects = []
-
+        self.historyLength = 10
         # Get Token
         self.bearerToken = self.obtainBearer()
 
@@ -32,7 +37,8 @@ class RecallApp:
         headers = {"Content-Type": "application/json"}
         data = config.data
         response = requests.post(url, json=data, headers=headers)
-        print(response.status_code)
+        # print(response.status_code)
+
         if (response.status_code == 200):
             # print(response.json()["access"])
             return response.json()["access"]
@@ -44,12 +50,14 @@ class RecallApp:
         # print("obtain")
         # print(headers)
         response = requests.get(url, headers=headers)
-        print(response.status_code)
+        # print(response.status_code)
         if(response.status_code == 200):
             for item in response.json():
                 id = item["id"]
                 name = item["name"]
-                self.trackedObjects.append(Object(id, name))
+                ob = Object(id, name)
+                ob.locHistory.append((0,0))
+                self.trackedObjects.append(ob)
             # self.trackedObjects = response.json()
 
     def updateLocations(self, id, x, y):
@@ -57,23 +65,48 @@ class RecallApp:
         for item in self.trackedObjects:
             if item.id == id:
                 # calculate distance between last seen location
+
+                # Grab average of the locHistory 
+                xsum = 0
+                ysum = 0
+                for location in item.locHistory:
+                    xsum += location[0]
+                    ysum += location[1]
+                xavg = xsum/len(item.locHistory)
+                yavg = ysum/len(item.locHistory)
+
                 # euclidean distance
-                dist = np.sqrt((item.x - x)**2 + (item.y - y)**2)
-                # manhattan 
-                dist = np.abs(item.x-x) + np.abs(item.y-y)
-                # print(dist)
-                if(dist > 2):
-                    print("Phone moved " + str(dist) + "pixels")
+                dist = np.sqrt((item.x - xsum)**2 + (item.y - ysum)**2)
+                # # manhattan 
+                # dist = np.abs(item.x-x) + np.abs(item.y-y)
+                threshold = 5
+                if item.isMoving:
+                    if dist < threshold:
+                        # stopped moving
+                        print("Phone moved " + str(dist) + "pixels")
+
+                else:   #If not moving
+                    if dist >= threshold:
+                        item.isMoving = True
 
                 # Update distance
                 item.x = x
                 item.y = y
 
+                # Update queue
+                if(len(item.locHistory) > self.historyLength):
+                    item.popleft()
+                    item.locHistory.append((x, y))
+                else:
+                    item.locHistory.append((x, y))
+
 
 
     def sendUpdate(self, id, name, image, description):
         url = "fydp-backend-production.up.railway.app/ObjectTracking/" + id
-        headers = {"Content-Type": "application/json", "Authorization":self.bearerToken}
+        headers = {"Content-Type": "application/json", "Authorization":"Bearer " +self.bearerToken}
+
+        imageBase64 =base64.b64encode()
 
         data = {
             "name": name,
