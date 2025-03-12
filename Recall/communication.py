@@ -86,7 +86,7 @@ class RecallApp:
                         # stopped moving
                         print("Phone moved " + str(dist) + "pixels")
                         item.isMoving = False
-                        output = self.to64(frame)
+                        output = self.toB64(frame)
                         # make request
 
 
