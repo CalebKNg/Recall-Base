@@ -45,6 +45,7 @@ def app_callback(pad, info, user_data):
         # Get video frame
         frame = get_numpy_from_buffer(buffer, format, width, height)
     user_data.set_frame(frame)
+
     # Get the detections from the buffer
     roi = hailo.get_roi_from_buffer(buffer)
     detections = roi.get_objects_typed(hailo.HAILO_DETECTION)
@@ -55,12 +56,13 @@ def app_callback(pad, info, user_data):
         label = detection.get_label()
         bbox = detection.get_bbox()
         confidence = detection.get_confidence()
-        if label == "cell phone" and confidence > 0.8:
+        # Object ID 14
+        if label == "cell phone" and confidence > 0.6:
             ## assume only one cell phone
             x = bbox.xmin()+bbox.width()/2
             y = bbox.ymin()+bbox.height()/2
-            user_data.recallapp.updateLocations(14, x, y)
-            # print("cell phone")
+            user_data.recallapp.updateLocations(14, x, y, frame)
+            # print("cell phone")z
     # Do something with the detection that updates the recall app
     #user_data.recallapp.
 

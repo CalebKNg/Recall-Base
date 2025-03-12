@@ -14,13 +14,14 @@ class Object:
         self.y = 0
         self.locHistory = deque()
         self.isMoving = True
+        self.lastLocationImage = ""
         
 
 class RecallApp:
     def __init__(self):
         # prob need an auth token as well as a dictionary of the objects that are currently being tracked
         self.trackedObjects = []
-        self.historyLength = 10
+        self.historyLength = 30
         # Get Token
         self.bearerToken = self.obtainBearer()
 
@@ -60,7 +61,7 @@ class RecallApp:
                 self.trackedObjects.append(ob)
             # self.trackedObjects = response.json()
 
-    def updateLocations(self, id, x, y):
+    def updateLocations(self, id, x, y, frame):
         for item in self.trackedObjects:
             if item.id == id:
 
@@ -85,6 +86,9 @@ class RecallApp:
                         # stopped moving
                         print("Phone moved " + str(dist) + "pixels")
                         item.isMoving = False
+                        output = self.to64(frame)
+                        # make request
+
 
                 else:   # If not moving
                     if dist >= threshold:
@@ -102,6 +106,11 @@ class RecallApp:
                     item.locHistory.append((x, y))
 
 
+    def toB64(self, img):
+        _, buffer = cv2.imencode('.jpg', img)
+        im_bytes = buffer.tobytes()
+        b64 = base64.b64encode(im_bytes)
+        return b64.decode("utf-8")
 
     def sendUpdate(self, id, name, image, description):
         url = "fydp-backend-production.up.railway.app/ObjectTracking/" + id
