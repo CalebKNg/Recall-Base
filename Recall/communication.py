@@ -76,15 +76,15 @@ class RecallApp:
                 yavg = ysum/len(item.locHistory)
 
                 # Grab average of the last 5 
-                xrec = 0
-                yrec = 0
-                for i in range(5):
-                    xrec += item.locHistory[i][0]
-                    yrec += item.locHistory[i][1]
+                # xrec = 0
+                # yrec = 0
+                # for i in range(5):
+                #     xrec += item.locHistory[i][0]
+                #     yrec += item.locHistory[i][1]
 
                 # euclidean distance
-                # dist = np.sqrt((x - xavg)**2 + (y - yavg)**2)
-                dist = np.sqrt((xrec - xavg)**2 + (yrec - yavg)**2)
+                dist = np.sqrt((x - xavg)**2 + (y - yavg)**2)
+                # dist = np.sqrt((xrec - xavg)**2 + (yrec - yavg)**2)
 
                 # print(dist)
                 
@@ -94,11 +94,11 @@ class RecallApp:
                 if item.isMoving:
                     if dist < threshold:
                         # stopped moving
+                        
                         # print("Phone moved " + str(dist) + "pixels")
                         item.isMoving = False
                         output = self.toB64(frame)
                         # make request
-
 
                 else:   # If not moving
                     if dist >= threshold:
