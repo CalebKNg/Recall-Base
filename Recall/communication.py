@@ -81,7 +81,8 @@ class RecallApp:
                 for i in range(5):
                     xrec += item.locHistory[i][0]
                     yrec += item.locHistory[i][1]
-
+                xrec = xrec/5
+                yrec = yrec/5
                 # euclidean distance
                 # dist = np.sqrt((x - xavg)**2 + (y - yavg)**2)
                 dist = np.sqrt((xrec - xavg)**2 + (yrec - yavg)**2)
