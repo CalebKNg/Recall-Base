@@ -80,7 +80,7 @@ class RecallApp:
                 
                 # # manhattan 
                 # dist = np.abs(item.x-x) + np.abs(item.y-y)
-                threshold = 0.001
+                threshold = 0.01
                 if item.isMoving:
                     if dist < threshold:
                         # stopped moving
