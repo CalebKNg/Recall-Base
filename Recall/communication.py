@@ -169,9 +169,13 @@ class RecallApp:
         response = requests.post(url, json=data, headers=headers)
         print(response.status_code)
 
+
+    def resetCount(self):
+        self.count = 0
+
     def obtainSurroundings(self, frame):
         print("obtained")
-        self.count = 0
+        
         # results = self.model(frame)
         # r = results.xyxy[0].numpy()
 

@@ -53,6 +53,7 @@ def app_callback(pad, info, user_data):
     count = user_data.recallapp.getCount()
     if count == user_data.recallapp.updateSurroundingsEvery:
         user_data.recallapp.MLFrameQueue.put(frame)
+        user_data.recallapp.resetCount()
     user_data.recallapp.increment()
     print(count)
     
