@@ -202,7 +202,7 @@ class RecallApp:
             # Main Program Loop
 
             # Update Surroundings
-            if not self.MLFrameQueue():
+            if not self.MLFrameQueue.empty():
                 frame = self.MLFrameQueue.get()
                 self.obtainSurroundings(frame)
     
