@@ -95,7 +95,7 @@ class RecallApp:
 
                 # Update queue
                 if(len(item.locHistory) > self.historyLength):
-                    item.popleft()
+                    item.locHistory.popleft()
                     item.locHistory.append((x, y))
                 else:
                     item.locHistory.append((x, y))
