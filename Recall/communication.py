@@ -75,6 +75,7 @@ class RecallApp:
 
                 # euclidean distance
                 dist = np.sqrt((x - xavg)**2 + (y - yavg)**2)
+                print(dist)
                 
                 # # manhattan 
                 # dist = np.abs(item.x-x) + np.abs(item.y-y)
