@@ -55,7 +55,7 @@ def app_callback(pad, info, user_data):
         user_data.recallapp.MLFrameQueue.put(frame)
         user_data.recallapp.resetCount()
     user_data.recallapp.increment()
-    print(count)
+    # print(count)
     
     # Get the detections from the buffer
     roi = hailo.get_roi_from_buffer(buffer)

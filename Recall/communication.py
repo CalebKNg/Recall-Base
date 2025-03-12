@@ -5,6 +5,7 @@ from multiprocessing import Process, Queue
 import torch
 import base64
 import config
+import heapq
 from collections import deque
 
 classNames = ["person", "bicycle", "car", "motorbike", "aeroplane", "bus", "train", "truck", "boat",
@@ -42,8 +43,9 @@ class RecallApp:
         # Tracked objects list
         self.trackedObjects = []
         
-        # Queue
+        # Queues
         self.MLFrameQueue = Queue()
+        self.detectionQueue = Queue()
 
         # Surroundings list
         self.surroundings = []
@@ -121,10 +123,6 @@ class RecallApp:
                 # dist = np.sqrt((x - xavg)**2 + (y - yavg)**2)
                 dist = np.sqrt((xrec - xavg)**2 + (yrec - yavg)**2)
 
-                # print(dist)
-                
-                # # manhattan 
-                # dist = np.abs(item.x-x) + np.abs(item.y-y)
                 threshold = 0.01
                 if item.isMoving:
                     if dist < threshold:
@@ -174,19 +172,26 @@ class RecallApp:
         self.count = 0
 
     def obtainSurroundings(self, frame):
-        print("obtained")
+        # print("obtained")
         
-        # results = self.model(frame)
-        # r = results.xyxy[0].numpy()
+        results = self.model(frame)
+        r = results.xyxy[0].numpy()
 
-        # for row in r:
-        #     xmin, ymin, xmax, ymax, confidence, cls = row
-            
-        #     xmin, ymin, xmax, ymax, cls = int(xmin), int(ymin), int(xmax), int(ymax), int(cls)
-        #     x = xmin+(xmax-xmin)/2
-        #     y = ymin+(ymax-ymin)/2
-        #     self.surroundings.append((x, y, classNames[cls]))
+        for row in r:
+            xmin, ymin, xmax, ymax, confidence, cls = row
+            if classNames[cls] != "person" and classNames[cls] != "cell phone" and confidence > 0.6:
+                xmin, ymin, xmax, ymax, cls = int(xmin), int(ymin), int(xmax), int(ymax), int(cls)
+                x = xmin+(xmax-xmin)/2
+                y = ymin+(ymax-ymin)/2
+                self.surroundings.append((x, y, classNames[cls]))
 
+    def findKNearestPoints(self, x, y):
+        k = 3
+        heap = []
+        for px, py, s in self.surroundings:
+            distance = np.sqrt((px - x) ** 2 + (py - y) ** 2)
+            heapq.heappush(heap, (distance, (px, py, s)))
+        return [heapq.heappop(heap)[1] for _ in range(min(k, len(heap)))]
 
     def toB64(self, img):
         _, buffer = cv2.imencode('.jpg', img)
