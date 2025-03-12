@@ -171,7 +171,7 @@ class RecallApp:
 
     def obtainSurroundings(self, frame):
         print("obtained")
-        self.count == 0
+        self.count = 0
         # results = self.model(frame)
         # r = results.xyxy[0].numpy()
 
