@@ -61,10 +61,8 @@ class RecallApp:
             # self.trackedObjects = response.json()
 
     def updateLocations(self, id, x, y):
-        # print("updating "+ str(id))
         for item in self.trackedObjects:
             if item.id == id:
-                # calculate distance between last seen location
 
                 # Grab average of the locHistory 
                 xsum = 0
@@ -79,13 +77,14 @@ class RecallApp:
                 dist = np.sqrt((item.x - xsum)**2 + (item.y - ysum)**2)
                 # # manhattan 
                 # dist = np.abs(item.x-x) + np.abs(item.y-y)
-                threshold = 5
+                threshold = 2
                 if item.isMoving:
                     if dist < threshold:
                         # stopped moving
                         print("Phone moved " + str(dist) + "pixels")
+                        item.isMoving = False
 
-                else:   #If not moving
+                else:   # If not moving
                     if dist >= threshold:
                         item.isMoving = True
 
