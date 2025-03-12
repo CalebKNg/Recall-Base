@@ -36,7 +36,7 @@ class RecallApp:
         
         self.historyLength = 60
         self.avgLength = 10
-        self.updateSurroundingsEvery = 900
+        self.updateSurroundingsEvery = 300
         self.count = self.updateSurroundingsEvery
 
         # Tracked objects list
@@ -203,6 +203,7 @@ class RecallApp:
 
             # Update Surroundings
             if not self.MLFrameQueue.empty():
+
                 frame = self.MLFrameQueue.get()
                 self.obtainSurroundings(frame)
     
