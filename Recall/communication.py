@@ -63,7 +63,7 @@ class RecallApp:
         # Initiate Relational Model
         self.model = torch.hub.load("ultralytics/yolov5", "yolov5s")
         self.model.verbose = True
-        self.model.cpu()
+        self.model.to("cpu")
 
         # Start process
         self.process = Process(target=self.run)
