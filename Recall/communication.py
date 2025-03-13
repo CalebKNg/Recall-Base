@@ -190,6 +190,8 @@ class RecallApp:
                 x = xmin+(xmax-xmin)/2
                 y = ymin+(ymax-ymin)/2
                 self.surroundings.append((x, y, classNames[cls]))
+        print("surroundings")
+        print(self.surroundings)
 
     def findKNearestPoints(self, x, y):
         k = 3
