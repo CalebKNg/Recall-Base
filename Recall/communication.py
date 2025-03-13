@@ -40,7 +40,7 @@ class RecallApp:
         
         self.historyLength = 60
         self.avgLength = 10
-        self.updateSurroundingsEvery = 300
+        self.updateSurroundingsEvery = 9000
         self.count = self.updateSurroundingsEvery
         self.sector_size = 360/90
 
