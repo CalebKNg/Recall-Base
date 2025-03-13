@@ -181,8 +181,9 @@ class RecallApp:
         print("obtained")
         
         results = self.model(frame)
+        print("1)")
         r = results.xyxy[0].numpy()
-
+        print("2")
         for row in r:
             xmin, ymin, xmax, ymax, confidence, cls = row
             if classNames[cls] != "person" and classNames[cls] != "cell phone" and confidence > 0.6:
