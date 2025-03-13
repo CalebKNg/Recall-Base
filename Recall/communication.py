@@ -20,6 +20,9 @@ classNames = ["person", "bicycle", "car", "motorbike", "aeroplane", "bus", "trai
               "teddy bear", "hair drier", "toothbrush"
               ]
 
+relational_words = [
+        "the right of", "above", "to the left of", "below", 
+    ]
 class Object:
     def __init__(self, id, name):
         self.id = id
@@ -39,6 +42,7 @@ class RecallApp:
         self.avgLength = 10
         self.updateSurroundingsEvery = 300
         self.count = self.updateSurroundingsEvery
+        self.sector_size = 360/90
 
         # Tracked objects list
         self.trackedObjects = []
@@ -131,7 +135,9 @@ class RecallApp:
                         # print("Phone moved " + str(dist) + "pixels")
                         item.isMoving = False
                         output = self.toB64(frame)
-                    
+
+                        pts = self.findKNearestPoints(x, y)
+                        print(self.relationalString(x, y, pts))
                         # make request
                         # self.sendUpdate(item.id, output, "")
 
@@ -192,6 +198,21 @@ class RecallApp:
             distance = np.sqrt((px - x) ** 2 + (py - y) ** 2)
             heapq.heappush(heap, (distance, (px, py, s)))
         return [heapq.heappop(heap)[1] for _ in range(min(k, len(heap)))]
+
+    def relationalString(self, x, y, points):
+        string = "Check "
+        for px, py, s in points:
+            angle = self.angleBetween(x, y, px, py)
+            string = string + relational_words[int(angle//(self.sector_size))]
+            string = string + " " + s + ", "
+
+        return string
+
+    def angleBetween(x, y, x2, y2):
+        xdiff = x2 - x
+        ydiff = y2 - y
+        return np.arctan(ydiff/xdiff)*180/np.pi
+
 
     def toB64(self, img):
         _, buffer = cv2.imencode('.jpg', img)
