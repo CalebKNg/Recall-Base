@@ -62,7 +62,6 @@ class RecallApp:
 
         # Initiate Relational Model
         self.model = torch.hub.load("ultralytics/yolov5", "yolov5s")
-        print(self.model)
 
         # Start process
         self.process = Process(target=self.run)
@@ -181,7 +180,14 @@ class RecallApp:
     def obtainSurroundings(self, frame):
         print("obtained")
         
-        results = self.model(frame)
+        # results = self.model(frame)
+        try:
+            results = self.model(frame)
+            print("Model inference completed")
+        except Exception as e:
+            print("Error during model inference:", str(e))
+            return
+        
         print("1")
         r = results.xyxy[0].numpy()
         print("2")
