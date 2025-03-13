@@ -62,6 +62,7 @@ class RecallApp:
 
         # Initiate Relational Model
         self.model = torch.hub.load("ultralytics/yolov5", "yolov5s")
+        self.model.verbose = True
 
         # Start process
         self.process = Process(target=self.run)
@@ -179,11 +180,6 @@ class RecallApp:
 
     def obtainSurroundings(self, frame):
         print("obtained")
-        cv2.imshow("image", frame)
-
-        # waits for user to press any key
-        # (this is necessary to avoid Python kernel form crashing)
-        cv2.waitKey(0)
 
         # results = self.model(frame)
         try:
