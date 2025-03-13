@@ -73,7 +73,7 @@ def app_callback(pad, info, user_data):
             x = bbox.xmin()+bbox.width()/2
             y = bbox.ymin()+bbox.height()/2
 
-            cv2.rectangle(frame, (bbox.xmin(), bbox.ymin()), (bbox.xmin()+bbox.width(), bbox.ymin()+bbox.height()), (255, 0, 255), 3)
+            cv2.rectangle(frame, (int(bbox.xmin()), int(bbox.ymin())), (int(bbox.xmin())+int(bbox.width()), int(bbox.ymin())+int(bbox.height())), (255, 0, 255), 3)
             user_data.recallapp.updateLocations(14, x, y, frame)
             
     # Do something with the detection that updates the recall app
