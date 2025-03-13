@@ -23,6 +23,7 @@ classNames = ["person", "bicycle", "car", "motorbike", "aeroplane", "bus", "trai
 relational_words = [
         "the right of", "above", "to the left of", "below", 
     ]
+
 class Object:
     def __init__(self, id, name):
         self.id = id
@@ -32,7 +33,6 @@ class Object:
         self.locHistory = deque()
         self.isMoving = True
         self.lastLocationImage = ""
-        
 
 class RecallApp:
     def __init__(self):
@@ -139,9 +139,10 @@ class RecallApp:
                         output = self.toB64(frame)
 
                         pts = self.findKNearestPoints(x, y)
-                        # print(self.relationalString(x, y, pts))
+                        outputString = self.relationalString(x, y, pts)
+                        print(outputString)
                         # make request
-                        # self.sendUpdate(item.id, output, "")
+                        # self.sendUpdate(item.id, output, outputString)
 
                 else:   # If not moving
                     if dist >= threshold:
@@ -172,7 +173,7 @@ class RecallApp:
             "location_description": description
         }
 
-        response = requests.post(url, json=data, headers=headers)
+        response = requests.patch(url, json=data, headers=headers)
         print(response.status_code)
 
 
@@ -199,8 +200,8 @@ class RecallApp:
                 x = xmin+(xmax-xmin)/2
                 y = ymin+(ymax-ymin)/2
                 self.surroundings.append((x, y, classNames[cls]))
-        print("surroundings")
-        print(self.surroundings)
+        # print("surroundings")
+        # print(self.surroundings)
 
     def findKNearestPoints(self, x, y):
         k = 3
