@@ -63,6 +63,7 @@ class RecallApp:
         # Initiate Relational Model
         self.model = torch.hub.load("ultralytics/yolov5", "yolov5s")
         self.model.verbose = True
+        self.model.cpu()
 
         # Start process
         self.process = Process(target=self.run)
@@ -188,10 +189,9 @@ class RecallApp:
         except Exception as e:
             print("Error during model inference:", str(e))
             return
-        
-        print("1")
+
         r = results.xyxy[0].numpy()
-        print("2")
+
         for row in r:
             xmin, ymin, xmax, ymax, confidence, cls = row
             if classNames[cls] != "person" and classNames[cls] != "cell phone" and confidence > 0.6:
