@@ -137,7 +137,7 @@ class RecallApp:
                         output = self.toB64(frame)
 
                         pts = self.findKNearestPoints(x, y)
-                        print(self.relationalString(x, y, pts))
+                        # print(self.relationalString(x, y, pts))
                         # make request
                         # self.sendUpdate(item.id, output, "")
 
@@ -181,7 +181,7 @@ class RecallApp:
         print("obtained")
         
         results = self.model(frame)
-        print("1)")
+        print("1")
         r = results.xyxy[0].numpy()
         print("2")
         for row in r:
